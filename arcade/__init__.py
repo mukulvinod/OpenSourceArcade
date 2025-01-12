@@ -59,7 +59,7 @@ else:
 
 import pyglet
 
-# Enable HiDPI support
+# Enable HiDPI support using stretch mode
 if os.environ.get("ARCADE_TEST"):
     pyglet.options.dpi_scaling = "real"
 else:

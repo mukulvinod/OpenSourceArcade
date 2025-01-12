@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from typing import NamedTuple, TypedDict
+from typing import Any, NamedTuple, TypedDict
 
 from pyglet.math import Vec2
 
@@ -462,12 +462,17 @@ class Rect(NamedTuple):
         px, py = point
         return (self.left < px < self.right) and (self.bottom < py < self.top)
 
-    def __contains__(self, point: Point2) -> bool:
+    def __contains__(self, point: Point2 | Any) -> bool:
         """Shorthand for :py:meth:`rect.point_in_rect(point) <point_in_rect>`.
 
         Args:
             point: A tuple of :py:class:`int` or :py:class:`float` values.
         """
+        from arcade.utils import is_iterable
+
+        if not is_iterable(point):
+            return False
+
         return self.point_in_rect(point)
 
     def distance_from_bounds(self, point: Point2) -> float:
@@ -487,6 +492,7 @@ class Rect(NamedTuple):
 
         Args:
             point: The point to check.
+            tolerance: The maximum distance the point can be from the bounds.
         """
         return abs(self.distance_from_bounds(point)) < tolerance
 

@@ -13,11 +13,9 @@ from pyglet.media import Source
 from arcade.resources import resolve
 
 if os.environ.get("ARCADE_SOUND_BACKENDS"):
-    pyglet.options.audio = tuple(  # type: ignore
-        v.strip() for v in os.environ["ARCADE_SOUND_BACKENDS"].split(",")
-    )
+    pyglet.options.audio = tuple(v.strip() for v in os.environ["ARCADE_SOUND_BACKENDS"].split(","))
 else:
-    pyglet.options.audio = ("openal", "xaudio2", "directsound", "pulse", "silent")  # type: ignore
+    pyglet.options.audio = ("openal", "xaudio2", "directsound", "pulse", "silent")
 
 import pyglet.media as media
 
@@ -143,7 +141,7 @@ class Sound:
             # we need to delete this function.
             player.on_player_eos = None  # type: ignore  # pending https://github.com/pyglet/pyglet/issues/845
 
-        player.on_player_eos = _on_player_eos
+        player.on_player_eos = _on_player_eos  # type: ignore
         return player
 
     def stop(self, player: media.Player) -> None:
