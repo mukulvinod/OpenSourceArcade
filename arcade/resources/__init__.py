@@ -6,8 +6,15 @@ from arcade.exceptions import warning, ReplacementWarning
 
 #: The absolute path to this directory
 RESOURCE_DIR = Path(__file__).parent.resolve()
+
+# The "system" resources common to Arcade
 SYSTEM_PATH = RESOURCE_DIR / "system"
+FONTS_PATH = SYSTEM_PATH / "fonts"
+TTF_PATH = FONTS_PATH / "ttf"
+
+# Basic resources in the :assets: handle
 ASSET_PATH = RESOURCE_DIR / "assets"
+
 
 handles: dict[str, list[Path]] = {
     "resources": [SYSTEM_PATH, ASSET_PATH],
@@ -212,32 +219,91 @@ def list_built_in_assets(
 
 
 def load_kenney_fonts() -> None:
-    """Loads all the fonts in arcade's system directory.
+    """Loads all the Kenney.nl fonts bundled with Arcade.
 
-    Currently, this is only the Kenney fonts::
+    .. tip:: This function is best for prototyping and experimenting!
 
-        Kenney_Blocks.ttf          - Kenney Blocks
-        Kenney_Future.ttf          - Kenney Future
-        Kenney_Future_Narrow.ttf   - Kenney Future Narrow
-        Kenney_High.ttf            - Kenney High
-        Kenney_High_Square.ttf     - Kenney High Square
-        Kenney_Mini.ttf            - Kenney Mini
-        Kenney_Mini_Square.ttf     - Kenney Mini Square
-        Kenney_Pixel.ttf           - Kenney Pixel
-        Kenney_Pixel_Square.ttf    - Kenney Pixel Square
-        Kenney_Rocket.ttf          - Kenney Rocket
-        Kenney_Rocket_Square.ttf   - Kenney Rocket Square
+         For best performance, you may want to switch to
+         :py:class:`arcade.load_font` before release.
+
+    Please see :ref:`resources-fonts-kenney` for previews and
+    license information. The filename to load and ``font_name`` to use
+    when drawing text are summarized below:
+
+    .. might swap to this style for the resources listing once I figure out how to
+    .. cleanly modify the file to use it.
+
+    =========================================  =========================================================================
+    ``font_name`` for :py:class:`arcade.Text`  :ref:`Resource handle <resource_handles>` for :py:func:`arcade.load_font`
+    =========================================  =========================================================================
+    ``"Kenney Blocks"``                        ``:resources:fonts/ttf/Kenney/Kenney_Blocks.ttf``
+    ``"Kenney Future"``                        ``:resources:fonts/ttf/Kenney/Kenney_Future.ttf``
+    ``"Kenney Future Narrow"``                 ``:resources:fonts/ttf/Kenney/Kenney_Future_Narrow.ttf``
+    ``"Kenney High"``                          ``:resources:fonts/ttf/Kenney/Kenney_High.ttf``
+    ``"Kenney High Square"``                   ``:resources:fonts/ttf/Kenney/Kenney_High_Square.ttf``
+    ``"Kenney Mini"``                          ``:resources:fonts/ttf/Kenney/Kenney_Mini.ttf``
+    ``"Kenney Mini Square"``                   ``:resources:fonts/ttf/Kenney/Kenney_Mini_Square.ttf``
+    ``"Kenney Pixel"``                         ``:resources:fonts/ttf/Kenney/Kenney_Pixel.ttf``
+    ``"Kenney Pixel Square"``                  ``:resources:fonts/ttf/Kenney/Kenney_Pixel_Square.ttf``
+    ``"Kenney Rocket"``                        ``:resources:fonts/ttf/Kenney/Kenney_Rocket.ttf``
+    ``"Kenney Rocket Square"``                 ``:resources:fonts/ttf/Kenney/Kenney_Rocket_Square.ttf``
+    =========================================  =========================================================================
+
+    """  # noqa: E501  # Silence ruff  # pending: better generation
+    from arcade.text import load_font
+
+    load_font(":system:fonts/ttf/Kenney/Kenney_Blocks.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Future.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Future_Narrow.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_High.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_High_Square.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Mini.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Mini_Square.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Pixel.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Pixel_Square.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Rocket.ttf")
+    load_font(":system:fonts/ttf/Kenney/Kenney_Rocket_Square.ttf")
+
+
+def load_liberation_fonts() -> None:
+    """Loads all styles for generic Arial, Courier, and Times New Roman replacements.
+
+    .. tip:: This function is best for prototyping and experimenting!
+
+             For best performance, you may want to switch to
+             :py:class:`arcade.load_font` before release.
+
+    The Liberation fonts are proven, permissively-licensed fonts.[
+    For previews and additional information, please see
+    :ref:`resources-fonts-liberation`.
+
+    .. list-table:: ``font_name`` values for :py:class:`arcade.Text`
+       :header-rows: 1
+
+       * - Proprietary Font(s)
+         - Liberation Replacemetn
+
+       * - ``"Courier"``
+         - ``"Liberation Mono"``
+
+       * - ``"Times New Roman"``, ``"Times"``
+         - ``"Liberation Serif"``
+
+       * - ``"Arial"``
+         - ``"Liberation Sans"``
+
     """
     from arcade.text import load_font
 
-    load_font(":system:fonts/ttf/Kenney_Blocks.ttf")
-    load_font(":system:fonts/ttf/Kenney_Future.ttf")
-    load_font(":system:fonts/ttf/Kenney_Future_Narrow.ttf")
-    load_font(":system:fonts/ttf/Kenney_High.ttf")
-    load_font(":system:fonts/ttf/Kenney_High_Square.ttf")
-    load_font(":system:fonts/ttf/Kenney_Mini.ttf")
-    load_font(":system:fonts/ttf/Kenney_Mini_Square.ttf")
-    load_font(":system:fonts/ttf/Kenney_Pixel.ttf")
-    load_font(":system:fonts/ttf/Kenney_Pixel_Square.ttf")
-    load_font(":system:fonts/ttf/Kenney_Rocket.ttf")
-    load_font(":system:fonts/ttf/Kenney_Rocket_Square.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Mono_BoldItalic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Mono_Bold.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Mono_Italic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Mono_Regular.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Sans_BoldItalic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Sans_Bold.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Sans_Italic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Sans_Regular.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Serif_BoldItalic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Serif_Bold.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Serif_Italic.ttf")
+    load_font(":system:fonts/ttf/Liberation/Liberation_Serif_Regular.ttf")

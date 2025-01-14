@@ -67,6 +67,7 @@ skip_extensions = [
     ".txt",
     ".tiled-project",
     ".pyc",
+    ""  # Zero-extension stuff like LICENSE and README
 ]
 
 
@@ -112,16 +113,32 @@ def create_resource_path(
     return f"{prefix}:resources:{path.as_posix()}{suffix}"
 
 
+KENNEY_TTFS = "Kenney TTFs"
+LIBERATION_TTFS = "Liberation TTFs"
+
+PREFIX_REF_TARGET = {
+    KENNEY_TTFS: "resources-fonts-kenney",
+    LIBERATION_TTFS: "resources-fonts-liberation"
+}
+
 # pending: post-3.0 cleanup  # unstructured kludge
 REPLACE_TITLE_WORDS = {
-    "ttf": "Kenney TTFs",
+    "Kenney": KENNEY_TTFS,
+    "Liberation": LIBERATION_TTFS,
     "gui": "GUI",
     "window": "Window & Panel",
     ".": "Top-level Resources"
 }
+# NASTY! # pending: post-3.0 cleanup
+OVERRIDE_LEVELS = {
+    KENNEY_TTFS: 2,
+    LIBERATION_TTFS: 2
+}
+
 # pending: post-3.0 cleanup  # more unstructured filth
 SKIP_TITLES = {
-    "Kenney TTFs"
+    "Ttf"
+    # "Kenney TTFs"
 }
 
 
@@ -229,6 +246,10 @@ def process_resource_directory(out, dir: Path):
 
         file_list = filter_dir(path, keep=is_unskipped_file)
         num_files = len(file_list)
+        def _debug_print_files() -> None:  # pending: post-3.0 cleanup
+            """Nasty little temp helper"""
+            for file in file_list:
+                print(file.name)
 
         if num_files > 0:
 
@@ -245,23 +266,55 @@ def process_resource_directory(out, dir: Path):
                     continue
                 as_tup = tuple(display_parts[:heading_level])
                 if as_tup not in visited_headings:
+                    # NASTY! # pending: post 3.0 cleanup
+                    if part in OVERRIDE_LEVELS:
+                        heading_level = OVERRIDE_LEVELS[part]
+
+                    # print("!!!", heading_level, part, as_tup)
+
+                    if ref_target := PREFIX_REF_TARGET.get(part, None):
+                        out.write(f".. _{ref_target}:\n")
+
                     do_heading(out, heading_level, part)
                     visited_headings.add(as_tup)
 
             if raw_resource_handle == ":resources:images/":
-                for f in file_list:
-                    print(f.name)
+                _debug_print_files()
 
-            if raw_resource_handle == ":resources:fonts/ttf/":
-                for f in file_list:
-                    print(f.name)
-                # pending: post-3.0 cleanup
-                out.write("\n")
-                out.write(".. figure:: images/fonts_blue.png\n")
-                out.write("   :alt: The bundled Kenney.nl fonts.\n")
-                out.write("\n")
-                out.write("   Arcade includes the following fonts from `Kenney.nl's font pack <https://kenney.nl/assets/kenney-fonts>`_\n")
-                out.write("   are available using the path and filenames below.\n")
+            if raw_resource_handle.startswith(":resources:fonts/ttf/"):
+                _debug_print_files()
+                if raw_resource_handle.endswith("Kenney/"):
+                    out.write("\n")
+
+                    out.write(".. figure:: images/fonts_blue.png\n")
+                    # out.write("   :align: center\n")
+                    out.write("   :alt: The bundled Kenney.nl fonts.\n")
+                    out.write("\n")
+                    # Put the text *after* the CSS, or add <br> via .. raw:: html blocks
+                    # since the CSS may be broken.
+                    out.write("Arcade includes the following fonts from `Kenney.nl's font pack <https://kenney.nl/assets/kenney-fonts>`_\n")
+                    out.write("are available using the path and filenames below.\n")
+                    out.write("\n")
+
+                elif raw_resource_handle.endswith("Liberation/"):
+                    out.write(
+                        "\n"
+                        ".. figure:: images/fonts_liberation.png\n"
+                        "   :alt: The bundled Liberation font family trio.\n"
+                        #"   :align: center\n"
+                        # Put the text *after* the CSS, or add <br> via .. raw:: html blocks
+                        # since the CSS may be broken.
+                        "\n"
+                        "Arcade also includes the Liberation font family. This trio is designed and\n"
+                        "licensed specifically to be a portable, drop-in set of substitutes for Times, Arial,\n"
+                        "and Courier fonts. It uses the proven, commercial-friendly `SIL Open Font License`_.\n"
+                        "\n"
+                        "To use these fonts, you may use either approach:\n"
+                        "\n"
+                        "* load files for specific variants via :py:func:`arcade.load_font`\n"
+                        "* load all variants at once with :py:func:`arcade.resources.load_liberation_fonts`.\n"
+                        "\n"
+                    )
 
             n_cols = get_header_num_cols(raw_resource_handle, num_files)
             widths = get_column_widths_for_n(n_cols)
@@ -296,6 +349,7 @@ SUFFIX_TO_VIDEO_TYPE = {
     '.webm': 'webm',
     '.avi': 'avi'
 }
+
 
 def process_resource_files(out, file_list: List[Path]):
     cell_count = 0
@@ -342,8 +396,12 @@ def process_resource_files(out, file_list: List[Path]):
         elif suffix == ".glsl":
             file_path = FMT_URL_REF_PAGE.format(resource_path)
             out.write(f"    {start_row} - `{path} <{file_path}>`_\n")
-        # Link Tiled maps
-        elif suffix in (".json", ".ttf"):
+        # Fonts
+        elif suffix == ".ttf":
+            file_path = FMT_URL_REF_PAGE.format(resource_path)
+            out.write(f"    {start_row} - `{name} <{file_path}>`_\n")
+        # Tiled maps
+        elif suffix == ".json":
             file_path = FMT_URL_REF_PAGE.format(resource_path)
             out.write(f"    {start_row} - `{name} <{file_path}>`_\n")
         else:
