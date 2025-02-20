@@ -34,7 +34,7 @@ from arcade.gl import Program, Texture2D
 from arcade.gl.buffer import Buffer
 from arcade.gl.types import BlendFunction, OpenGlFilter, PyGLenum
 from arcade.gl.vertex_array import Geometry
-from arcade.types import RGBA255, Color, RGBANormalized, RGBOrANormalized
+from arcade.types import RGBA255, Color, RGBANormalized, RGBOrANormalized, RGBOrA255
 from arcade.utils import copy_dunders_unimplemented
 
 if TYPE_CHECKING:
@@ -1131,7 +1131,7 @@ class SpriteList(Generic[SpriteType]):
             if blend_function is not None:
                 self.ctx.blend_func = prev_blend_func
 
-    def draw_hit_boxes(self, color: RGBA255 = (0, 0, 0, 255), line_thickness: float = 1.0) -> None:
+    def draw_hit_boxes(self, color: RGBOrA255 = (0, 0, 0, 255), line_thickness: float = 1.0) -> None:
         """
         Draw all the hit boxes in this list.
 
@@ -1141,9 +1141,10 @@ class SpriteList(Generic[SpriteType]):
             color: The color of the hit boxes
             line_thickness: The thickness of the lines
         """
+        converted_color = Color.from_iterable(color)
         # NOTE: Find a way to efficiently draw this
         for sprite in self.sprite_list:
-            sprite.draw_hit_box(color, line_thickness)
+            sprite.draw_hit_box(converted_color, line_thickness)
 
     def _normalize_index_buffer(self) -> None:
         """
